@@ -11,11 +11,10 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
+    "rewrites": [ 
       {
-        "source": "**",
-        "destination": "/index.html"
-      }
+        "source": "**", "function": "app"
+      } 
     ]
   }
 }
