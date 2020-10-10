@@ -30,13 +30,20 @@ router.post('/invitation', (req, res) => {
 
         // TODO: verify uniqueness of invitationCode generated
 
+        let family = [];
+        let familyArray = params['family'];
+        familyArray.forEach(name => {
+            family.push({
+                "name": name,
+                "presenceConfirmed": false,
+            });
+        });
+
         db.collection(invitationsCollection).add({
+            family: family,
             invitationCode: invitationCode,
-            name: params['name'],
-            family: params['family'],
-            presenceConfirmed: params['presence_confirmed'],
-            presenceConfirmedMessage: params['presence_confirmed_message'],
-            presenceConfirmedOn: Date(),
+            presenceConfirmedMessage: null,
+            presenceConfirmedOn: null,
             presenceConfirmationUpdatedOn: null,
         });
     
