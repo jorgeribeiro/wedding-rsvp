@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const cors = require('cors');
+const { query } = require('express');
 app.use(cors({ origin: true }));
 
 const router = express.Router();
@@ -18,17 +19,20 @@ admin.initializeApp(functions.config().firebase);
 
 const db = admin.firestore();
 const invitationsCollection = 'invitations';
+const invitationsRef = db.collection(invitationsCollection);
 
 router.get('/hello-world', (req, res) => {
     res.json('Hello World!');
 });
 
-router.post('/invitation', (req, res) => {
+router.post('/invitation', async (req, res) => {
     try {
         let params = req.body;
         let invitationCode = generateInvitationCode();
 
-        // TODO: verify uniqueness of invitationCode generated
+        while (!await isInvitationCodeUnique(invitationCode)) {
+            invitationCode = generateInvitationCode();
+        }
 
         let family = [];
         let familyArray = params['family'];
@@ -39,7 +43,7 @@ router.post('/invitation', (req, res) => {
             });
         });
 
-        db.collection(invitationsCollection).add({
+        invitationsRef.add({
             family: family,
             invitationCode: invitationCode,
             presenceConfirmedMessage: null,
@@ -54,15 +58,21 @@ router.post('/invitation', (req, res) => {
 });
 
 function generateInvitationCode(length = 6) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
-    var charactersLength = characters.length;
+    let code = '';
+    let characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+    let charactersLength = characters.length;
 
-    for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    for ( let i = 0; i < length; i++ ) {
+        code += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
 
-    return result;
+    return code;
+}
+
+async function isInvitationCodeUnique(invitationCode) {
+    let snapshot = await invitationsRef.where('invitationCode', '==', invitationCode).get();
+
+    return snapshot.empty;
 }
 
 exports.app = functions.https.onRequest(app);
