@@ -28,11 +28,6 @@ router.get('/hello-world', (req, res) => {
 router.post('/invitation', async (req, res) => {
     try {
         let params = req.body;
-        let invitationCode = generateInvitationCode();
-
-        while (!await isInvitationCodeUnique(invitationCode)) {
-            invitationCode = generateInvitationCode();
-        }
 
         let family = [];
         let familyArray = params['family'];
@@ -45,7 +40,7 @@ router.post('/invitation', async (req, res) => {
 
         invitationsRef.add({
             family: family,
-            invitationCode: invitationCode,
+            invitationCode: await generateUniqueInvitationCode(),
             presenceConfirmedMessage: null,
             presenceConfirmedOn: null,
             presenceConfirmationUpdatedOn: null,
@@ -64,6 +59,16 @@ function generateInvitationCode(length = 6) {
 
     for ( let i = 0; i < length; i++ ) {
         code += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return code;
+}
+
+async function generateUniqueInvitationCode() {
+    let code = '';
+
+    while (code === '' || !isInvitationCodeUnique(code)) {
+        code = generateInvitationCode();
     }
 
     return code;
