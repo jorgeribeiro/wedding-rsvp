@@ -20,8 +20,9 @@ const db = admin.firestore();
 const invitationsCollection = 'invitations';
 const invitationsRef = db.collection(invitationsCollection);
 
-router.get('/hello-world', (req, res) => {
-    res.json('Hello World!');
+router.get('/invitations', async (req, res) => {
+    let snapshot = await invitationsRef.get();
+    res.json(snapshot.docs.map(doc => doc.data()));
 });
 
 router.post('/invitation', async (req, res) => {
