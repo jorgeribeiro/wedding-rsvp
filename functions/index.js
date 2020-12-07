@@ -32,8 +32,12 @@ router.post('/invitation', async (req, res) => {
         let family = [];
         let familyArray = params['family'];
         familyArray.forEach(name => {
+            if (name.trim() === '') {
+                throw new Error();
+            }
+
             family.push({
-                "name": name,
+                "name": name.trim(),
                 "presenceConfirmed": false,
             });
         });
@@ -45,7 +49,7 @@ router.post('/invitation', async (req, res) => {
             presenceConfirmedOn: null,
             presenceConfirmationUpdatedOn: null,
         });
-    
+
         res.status(201).send('Invitation created');
     } catch (error) {
         res.status(400).send('Error processing request. Check information entered');
@@ -57,7 +61,7 @@ function generateInvitationCode(length = 6) {
     let characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
     let charactersLength = characters.length;
 
-    for ( let i = 0; i < length; i++ ) {
+    for (let i = 0; i < length; i++) {
         code += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
 
