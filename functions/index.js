@@ -54,7 +54,7 @@ router.post('/invitation', async (req, res) => {
 
 function generateInvitationCode(length = 6) {
     let code = '';
-    let characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+    let characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
     let charactersLength = characters.length;
 
     for ( let i = 0; i < length; i++ ) {
