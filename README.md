@@ -5,3 +5,6 @@ Built with Express.js and Firebase Cloud Functions. Invitations are saved in Fir
 
 ## Endpoints
 In construction
+
+## Setting up
+In construction
