@@ -25,6 +25,18 @@ router.get('/invitations', async (req, res) => {
     res.json(snapshot.docs.map(doc => doc.data()));
 });
 
+router.get('/total-invitations', async (req, res) => {
+    let total = 0;
+    let snapshot = await invitationsRef.get();
+    let data = snapshot.docs.map(doc => doc.data());
+
+    data.forEach(element => {
+        total += element.family.length;
+    });
+
+    res.json(total);
+});
+
 router.post('/invitation', async (req, res) => {
     try {
         let params = req.body;
