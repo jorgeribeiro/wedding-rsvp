@@ -21,8 +21,15 @@ const invitationsCollection = 'invitations';
 const invitationsRef = db.collection(invitationsCollection);
 
 router.get('/invitations', async (req, res) => {
+    let total = 0;
     let snapshot = await invitationsRef.get();
-    res.json(snapshot.docs.map(doc => doc.data()));
+    let data = snapshot.docs.map(doc => doc.data());
+
+    data.forEach(element => {
+        total += element.family.length;
+    });
+
+    res.json({ totalInvited: total, invitations: data });
 });
 
 router.get('/total-invitations', async (req, res) => {
