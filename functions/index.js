@@ -32,6 +32,20 @@ router.get('/invitations', async (req, res) => {
     res.json({ totalInvited: total, invitations: data });
 });
 
+router.get('/invitation/:invitationCode', async (req, res) => {
+    let invitationCode = req.params.invitationCode;
+    if (invitationCode.length !== 6) {
+        res.status(400).send('Invitation code must be informed correctly');
+    }
+
+    let snapshot = await invitationsRef.where('invitationCode', '==', invitationCode.toUpperCase()).get();
+    if (snapshot.empty) {
+        res.status(404).send('Invitation not found');
+    }
+
+    res.json(snapshot.docs.map(doc => doc.data()));
+});
+
 router.post('/invitation', async (req, res) => {
     try {
         let params = req.body;
