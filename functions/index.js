@@ -35,12 +35,12 @@ router.get('/invitations', async (req, res) => {
 router.get('/invitation/:invitationCode', async (req, res) => {
     let invitationCode = req.params.invitationCode;
     if (invitationCode.length !== 6) {
-        res.status(400).send('Invitation code must be informed correctly');
+        res.status(400).json({ message: 'Invitation code must be informed correctly' });
     }
 
     let snapshot = await invitationsRef.where('invitationCode', '==', invitationCode.toUpperCase()).get();
     if (snapshot.empty) {
-        res.status(404).send('Invitation not found');
+        res.status(404).json({ message: 'Invitation not found' });
     }
 
     res.json(snapshot.docs.map(doc => doc.data()));
@@ -71,9 +71,9 @@ router.post('/invitation', async (req, res) => {
             presenceConfirmationUpdatedOn: null,
         });
 
-        res.status(201).send('Invitation created');
+        res.status(201).json({ message: 'Invitation created' });
     } catch (error) {
-        res.status(400).send('Error processing request. Check information entered');
+        res.status(400).json({ message: 'Error processing request. Check information entered' });
     }
 });
 
