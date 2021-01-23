@@ -43,7 +43,7 @@ router.get('/invitation/:invitationCode', async (req, res) => {
         res.status(404).json({ message: 'Invitation not found' });
     }
 
-    res.json(snapshot.docs.map(doc => doc.data()));
+    res.json(snapshot.docs.map(doc => doc.data())[0]);
 });
 
 router.post('/invitation', async (req, res) => {
