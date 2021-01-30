@@ -19,6 +19,7 @@ admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
 const invitationsCollection = 'invitations';
 const invitationsRef = db.collection(invitationsCollection);
+const FieldValue = admin.firestore.FieldValue;
 
 router.get('/invitations', async (req, res) => {
     let total = 0;
@@ -38,12 +39,12 @@ router.get('/invitation/:invitationCode', async (req, res) => {
         res.status(400).json({ message: 'Invitation code must be informed correctly' });
     }
 
-    let snapshot = await invitationsRef.where('invitationCode', '==', invitationCode.toUpperCase()).get();
+    let snapshot = await queryInvitationByCode(invitationCode);
     if (snapshot.empty) {
         res.status(404).json({ message: 'Invitation not found' });
     }
 
-    res.json(snapshot.docs.map(doc => doc.data())[0]);
+    res.json(snapshot.docs[0].data());
 });
 
 router.post('/invitation', async (req, res) => {
@@ -76,6 +77,52 @@ router.post('/invitation', async (req, res) => {
         res.status(400).json({ message: 'Error processing request. Check information entered' });
     }
 });
+
+router.post('/confirm-presence/:invitationCode', async (req, res) => {
+    try {
+        let invitationCode = req.params.invitationCode;
+        if (invitationCode.length !== 6) {
+            res.status(400).json({ message: 'Invitation code must be informed correctly' });
+        }
+
+        let snapshot = await queryInvitationByCode(invitationCode);
+        if (snapshot.empty) {
+            res.status(404).json({ message: 'Invitation not found' });
+        }
+
+        let params = req.body;
+        let doc = snapshot.docs[0];
+        let data = doc.data();
+
+        let presenceConfirmedMessage = data['presenceConfirmedMessage'];
+        let message = params['presenceConfirmedMessage'];
+        if (message.trim() !== '') {
+            presenceConfirmedMessage = message;
+        }
+
+        let timestamp = FieldValue.serverTimestamp();
+        let presenceConfirmedOn = data['presenceConfirmedOn'];
+        if (presenceConfirmedOn === null) {
+            presenceConfirmedOn = timestamp;
+        }
+
+        // TODO: update confirmation status for each member of the family
+        
+        invitationsRef.doc(doc.id).update({
+            presenceConfirmedMessage: presenceConfirmedMessage,
+            presenceConfirmedOn: presenceConfirmedOn,
+            presenceConfirmationUpdatedOn: timestamp,
+        });
+
+        res.status(201).json({ message: 'Invitation updated' });
+    } catch (error) {
+        res.status(400).json({ message: 'Error processing request. Check information entered' });
+    }
+});
+
+async function queryInvitationByCode(invitationCode) {
+    return await invitationsRef.where('invitationCode', '==', invitationCode.toUpperCase()).get();
+}
 
 function generateInvitationCode(length = 6) {
     let code = '';

@@ -63,5 +63,29 @@ Response:
 }
 ```
 
+### POST confirm presence `api/v1/confirm-presence/:invitationCode`
+Body example:
+```
+{
+    "family": [
+        {
+            "index": 0,
+            "presenceConfirmed": true
+        },
+        {
+            "index": 1,
+            "presenceConfirmed": false
+        }
+    ],
+    "presenceConfirmedMessage": "Message"
+}
+```
+Response:
+```
+{
+    "message": "Invitation updated"
+}
+```
+
 ## Setting up
 In construction
