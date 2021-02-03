@@ -106,15 +106,20 @@ router.post('/confirm-presence/:invitationCode', async (req, res) => {
             presenceConfirmedOn = timestamp;
         }
 
-        // TODO: update confirmation status for each member of the family
-        
+        let family = data['family'];
+        let confirmation = params['family'];
+        confirmation.forEach(item => {
+            family[item.index].presenceConfirmed = item.presenceConfirmed
+        });
+
         invitationsRef.doc(doc.id).update({
+            family: family,
             presenceConfirmedMessage: presenceConfirmedMessage,
             presenceConfirmedOn: presenceConfirmedOn,
             presenceConfirmationUpdatedOn: timestamp,
         });
 
-        res.status(201).json({ message: 'Invitation updated' });
+        res.json({ message: 'Invitation updated' });
     } catch (error) {
         res.status(400).json({ message: 'Error processing request. Check information entered' });
     }
