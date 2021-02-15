@@ -2,11 +2,15 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const express = require('express');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 const app = express();
 
 const cors = require('cors');
-app.use(cors({ origin: true }));
+app.use(cors({
+    origin: [process.env.CORS_1, process.env.CORS_2, process.env.CORS_3],
+    optionsSuccessStatus: 200
+}));
 
 const router = express.Router();
 app.use('/api/v1', router);
