@@ -9,6 +9,7 @@ Response example:
 ```
 {
     "totalInvited": 2,
+    "totalConfirmed": 0,
     "invitations": [
         {
             "invitationCode": "JKL235",
