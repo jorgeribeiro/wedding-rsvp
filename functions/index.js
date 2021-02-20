@@ -8,7 +8,7 @@ const app = express();
 
 const cors = require('cors');
 app.use(cors({
-    origin: [process.env.CORS_1, process.env.CORS_2, process.env.CORS_3],
+    origin: [process.env.CORS_1, process.env.CORS_2, process.env.CORS_3, process.env.CORS_4],
     optionsSuccessStatus: 200
 }));
 
