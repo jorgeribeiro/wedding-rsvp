@@ -26,15 +26,21 @@ const invitationsRef = db.collection(invitationsCollection);
 const FieldValue = admin.firestore.FieldValue;
 
 router.get('/invitations', async (req, res) => {
-    let total = 0;
-    let snapshot = await invitationsRef.get();
+    let totalInvited = 0;
+    let totalConfirmed = 0;
+    let snapshot = await invitationsRef.orderBy('presenceConfirmedOn', 'desc').get();
     let data = snapshot.docs.map(doc => doc.data());
 
     data.forEach(element => {
-        total += element.family.length;
+        totalInvited += element.family.length;
+        element.family.forEach(familyElement => {
+            if (familyElement.presenceConfirmed) {
+                totalConfirmed++;
+            }
+        });
     });
 
-    res.json({ totalInvited: total, invitations: data });
+    res.json({ totalInvited: totalInvited, totalConfirmed: totalConfirmed, invitations: data });
 });
 
 router.get('/invitation/:invitationCode', async (req, res) => {
