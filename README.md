@@ -3,7 +3,7 @@ API to RSVP to wedding invitation.
 
 Built with Express.js and Firebase Cloud Functions. Invitations are saved in Firebase Cloud Firestore.firebase
 ## Setting up
-Setup instructions copied and adapted from [Firebase SDK for Cloud Functions Quickstart](https://github.com/firebase/functions-samples/tree/main/quickstarts/big-ben)
+Setup instructions copied and adapted from [Firebase SDK for Cloud Functions Quickstart](https://github.com/firebase/functions-samples/tree/main/quickstarts/big-ben).
 ### 1. Clone this repo
 
 Clone or download this repo.
