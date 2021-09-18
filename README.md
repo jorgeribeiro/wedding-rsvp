@@ -51,7 +51,7 @@ firebase deploy
 ```
 
 > The first time you call `firebase deploy` on a new project with Functions will take longer than usual.
-
+> Since Node's engine version is set to 10 on `package.json` you might need to enable Billing for your Firebase's project, otherwise you won't be able to deploy your project to prod. Feel free to try different Node's versions.
 
 ## Try the sample on prod
 
