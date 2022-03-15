@@ -135,6 +135,38 @@ router.post('/confirm-presence/:invitationCode', async (req, res) => {
     }
 });
 
+router.post('/clear-presence-confirmation/:invitationCode', async (req, res) => {
+    try {
+        let invitationCode = req.params.invitationCode;
+        if (invitationCode.length !== 6) {
+            res.status(400).json({ message: 'Invitation code must be informed correctly' });
+        }
+
+        let snapshot = await queryInvitationByCode(invitationCode);
+        if (snapshot.empty) {
+            res.status(404).json({ message: 'Invitation not found' });
+        }
+
+        let doc = snapshot.docs[0];
+        let data = doc.data();
+        let family = data['family'];
+        family.forEach(item => {
+            item.presenceConfirmed = false
+        });
+
+        invitationsRef.doc(doc.id).update({
+            family: family,
+            presenceConfirmedMessage: null,
+            presenceConfirmedOn: null,
+            presenceConfirmationUpdatedOn: null,
+        });
+
+        res.json({ message: 'Invitation updated' });
+    } catch (error) {
+        res.status(400).json({ message: 'Error processing request. Check information entered' });
+    }
+});
+
 async function queryInvitationByCode(invitationCode) {
     return await invitationsRef.where('invitationCode', '==', invitationCode.toUpperCase()).get();
 }
