@@ -29,6 +29,8 @@ First you need to install the `npm` dependencies of the functions:
 cd functions && npm install; cd ..
 ```
 
+To run functions locally follow [this guide](https://firebase.google.com/docs/functions/local-emulator) and make sure you complete the [Setup admin credentials](https://firebase.google.com/docs/functions/local-emulator#set_up_admin_credentials_optional) step.
+
 Start serving your project locally using `firebase serve`
 
 Open the app in a browser at [http://localhost:5000/api/v1/invitations/](http://localhost:5000/api/v1/invitations/).
