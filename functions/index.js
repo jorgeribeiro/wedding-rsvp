@@ -2,6 +2,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const express = require('express');
 const bodyParser = require('body-parser');
+const { Parser } = require('json2csv');
 require('dotenv').config();
 
 const app = express();
@@ -165,6 +166,24 @@ router.post('/clear-presence-confirmation/:invitationCode', async (req, res) => 
     } catch (error) {
         res.status(400).json({ message: 'Error processing request. Check information entered' });
     }
+});
+
+router.get('/download-invitations', async (req, res) => {
+    let snapshot = await invitationsRef.orderBy('presenceConfirmedOn', 'desc').get();
+    let data = snapshot.docs.map(doc => doc.data());
+
+    let invitations = [];
+    data.forEach(element => {
+        let names = element.family[0].name;
+        element.family.slice(1).forEach(familyElement => {
+            names = names.concat(", ", familyElement.name);
+        });
+        invitations.push({ code: element.invitationCode, names: names });
+    });
+    const json2csv = new Parser({ fields: ['invitation_code', 'names'] });
+    const csv = json2csv.parse(invitations);
+    
+    res.header('Content-Type', 'text/csv').attachment('invitations.csv').send(csv);
 });
 
 async function queryInvitationByCode(invitationCode) {
