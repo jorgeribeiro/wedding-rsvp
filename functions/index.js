@@ -178,7 +178,7 @@ router.get('/download-invitations', async (req, res) => {
         element.family.slice(1).forEach(familyElement => {
             names = names.concat(", ", familyElement.name);
         });
-        invitations.push({ code: element.invitationCode, names: names });
+        invitations.push({ invitation_code: element.invitationCode, names: names });
     });
     const json2csv = new Parser({ fields: ['invitation_code', 'names'] });
     const csv = json2csv.parse(invitations);
