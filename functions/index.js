@@ -1,7 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const express = require('express');
-const bodyParser = require('body-parser');
 const { Parser } = require('json2csv');
 require('dotenv').config();
 
@@ -16,8 +15,8 @@ app.use(cors({
 const router = express.Router();
 app.use('/api/v1', router);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 admin.initializeApp(functions.config().firebase);
 
